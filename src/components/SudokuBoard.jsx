@@ -3,16 +3,16 @@ import { useSudoku } from "../context/SudokuContext";
 import "./SudokuBoard.css";
 
 export default function SudokuBoard() {
-  const { board, initialBoard, size, errors, updateCell, status } = useSudoku();
+  const { board, initialBoard, size, errors, updateCell, status, hintCell } =
+    useSudoku();
   const [selectedKey, setSelectedKey] = useState(null);
 
   if (!board.length) {
     return <p>No board yet. Click “New Game”.</p>;
   }
 
-  // 子宫格大小：9×9 → 3×3；6×6 → 2×3
   const blockRows = size === 6 ? 2 : 3;
-  const blockCols = size === 6 ? 3 : 3;
+  const blockCols = 3;
 
   function handleChange(e, r, c) {
     updateCell(r, c, e.target.value);
@@ -36,13 +36,14 @@ export default function SudokuBoard() {
           const key = `${r}-${c}`;
           const isError = !!errors[key];
           const isSelected = selectedKey === key;
+          const isHint = hintCell === key;
 
           let className = "cell";
           if (isFixed) className += " fixed";
           if (isError) className += " error";
           if (isSelected) className += " selected";
+          if (isHint) className += " hint";
 
-          // 子宫格粗边框：块的顶部、左侧 + 外边框
           if (r % blockRows === 0) className += " block-top";
           if (c % blockCols === 0) className += " block-left";
           if (r === size - 1) className += " block-bottom";

@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const SudokuContext = createContext(null);
+const STORAGE_KEY = "neo-sudoku-state-v1";
 
 // 6x6 的完整解
 const SOLUTION_6 = [
@@ -128,7 +129,33 @@ export function SudokuProvider({ children }) {
   const [board, setBoard] = useState([]);
   const [status, setStatus] = useState("idle"); // 'idle' | 'playing' | 'completed'
   const [errors, setErrors] = useState({}); // { "r-c": true }
-  const [elapsed, setElapsed] = useState(0); // 秒数
+  const [elapsed, setElapsed] = useState(0); // 秒
+  const [hintCell, setHintCell] = useState(null); // "r-c" 或 null
+
+  // 初始加载：如果 localStorage 里有保存的游戏，就恢复
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+
+    try {
+      const saved = JSON.parse(raw);
+      if (!saved || !saved.board || !saved.initialBoard) return;
+
+      setMode(saved.mode ?? null);
+      setSize(saved.size ?? null);
+      setSolutionBoard(saved.solutionBoard ?? []);
+      setInitialBoard(saved.initialBoard ?? []);
+      setBoard(saved.board ?? []);
+      setErrors(saved.errors ?? {});
+      setElapsed(saved.elapsed ?? 0);
+      setStatus(saved.status ?? "playing");
+      setHintCell(saved.hintCell ?? null);
+    } catch (e) {
+      console.error("Failed to parse saved sudoku state", e);
+    }
+  }, []);
 
   // 计时器：只在 playing 状态下自增
   useEffect(() => {
@@ -140,11 +167,54 @@ export function SudokuProvider({ children }) {
       setElapsed((prev) => prev + 1);
     }, 1000);
 
-    // 清理定时器
     return () => clearInterval(id);
   }, [status]);
 
+  // 每次状态变化时，把游戏保存到 localStorage
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!board.length) return;
+    if (status === "idle") return;
+
+    if (status === "completed") {
+      window.localStorage.removeItem(STORAGE_KEY);
+      return;
+    }
+
+    const payload = {
+      mode,
+      size,
+      solutionBoard,
+      initialBoard,
+      board,
+      errors,
+      elapsed,
+      status,
+      hintCell,
+    };
+
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch (e) {
+      console.error("Failed to save sudoku state", e);
+    }
+  }, [
+    mode,
+    size,
+    solutionBoard,
+    initialBoard,
+    board,
+    errors,
+    elapsed,
+    status,
+    hintCell,
+  ]);
+
   function startNewGame(newMode) {
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(STORAGE_KEY);
+    }
+
     const isEasy = newMode === "easy";
     const solution = isEasy ? SOLUTION_6 : SOLUTION_9;
     const clues = isEasy ? 18 : 30;
@@ -159,6 +229,7 @@ export function SudokuProvider({ children }) {
     setErrors({});
     setElapsed(0);
     setStatus("playing");
+    setHintCell(null);
   }
 
   function resetGame() {
@@ -167,6 +238,10 @@ export function SudokuProvider({ children }) {
     setErrors({});
     setElapsed(0);
     setStatus("playing");
+    setHintCell(null);
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(STORAGE_KEY);
+    }
   }
 
   function updateCell(row, col, value) {
@@ -191,6 +266,7 @@ export function SudokuProvider({ children }) {
     const nextErrors = computeErrors(next, size);
     setBoard(next);
     setErrors(nextErrors);
+    setHintCell(null); // 用户开始输入后取消 hint 高亮
 
     const hasEmpty = next.some((r) => r.includes(0));
     const hasErrors = Object.keys(nextErrors).length > 0;
@@ -202,6 +278,41 @@ export function SudokuProvider({ children }) {
     }
   }
 
+  // Hint：找一个只有唯一合法候选数字的空格
+  function giveHint() {
+    if (status !== "playing") return;
+    if (!board.length) return;
+    if (!size) return;
+
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        if (board[r][c] !== 0) continue;
+
+        const candidates = [];
+
+        for (let v = 1; v <= size; v++) {
+          const temp = board.map((row) => [...row]);
+          temp[r][c] = v;
+          const tempErrors = computeErrors(temp, size);
+
+          // 如果这个填入后，这个格子不是错误，就认为 v 是一个合法候选
+          if (!tempErrors[`${r}-${c}`]) {
+            candidates.push(v);
+          }
+
+          if (candidates.length > 1) break; // 多于一个候选就跳出
+        }
+
+        if (candidates.length === 1) {
+          setHintCell(`${r}-${c}`);
+          return;
+        }
+      }
+    }
+
+    // 如果没有找到唯一候选的格子，可以选择不做任何事
+  }
+
   const value = {
     mode,
     size,
@@ -211,11 +322,12 @@ export function SudokuProvider({ children }) {
     status,
     errors,
     elapsedSeconds: elapsed,
+    hintCell,
     startNewGame,
     resetGame,
     updateCell,
+    giveHint,
   };
-
 
   return (
     <SudokuContext.Provider value={value}>
