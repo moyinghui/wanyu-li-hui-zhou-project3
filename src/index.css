@@ -1,0 +1,325 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: radial-gradient(circle at top, #1f2937 0, #020617 55%);
+  color: #e5e7eb;
+}
+
+/* 布局 */
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(10px);
+  color: #e5e7eb;
+  padding: 0.6rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.navbar-logo {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #facc15;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links a {
+  color: #cbd5f5;
+  text-decoration: none;
+  padding-bottom: 0.2rem;
+  font-size: 0.95rem;
+  transition: color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.navbar-links a:hover {
+  color: #facc15;
+  transform: translateY(-1px);
+}
+
+.navbar-links a.active {
+  color: #facc15;
+  border-bottom: 2px solid #facc15;
+}
+
+.app-content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+/* 页面基础样式 */
+
+.page-title {
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.6rem;
+}
+
+.page {
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem 1.5rem;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+/* 按钮样式 */
+
+button {
+  font-family: inherit;
+}
+
+.btn,
+button {
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: linear-gradient(135deg, #facc15, #f97316);
+  color: #111827;
+  box-shadow: 0 4px 12px rgba(248, 250, 252, 0.25);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+button:hover,
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.6);
+  filter: brightness(1.05);
+}
+
+button:disabled,
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+.btn-secondary {
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  box-shadow: none;
+}
+
+.btn-secondary:hover {
+  background: rgba(30, 64, 175, 0.8);
+}
+
+/* 表单 */
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 320px;
+}
+
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  color: #e5e7eb;
+}
+
+.auth-form input {
+  margin-top: 0.25rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background: rgba(15, 23, 42, 0.8);
+  color: #e5e7eb;
+}
+
+.auth-form input:focus {
+  outline: 2px solid #facc15;
+  outline-offset: 1px;
+}
+
+/* 游戏列表 */
+
+.game-list {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0.75rem;
+}
+
+.game-list li {
+  margin-bottom: 0.4rem;
+}
+
+.game-list a {
+  color: #bfdbfe;
+  text-decoration: none;
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  display: inline-block;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.game-list a:hover {
+  background: rgba(37, 99, 235, 0.3);
+  color: #e5e7eb;
+}
+
+/* Timer 和状态 */
+
+.timer {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  color: #e5e7eb;
+}
+
+.timer-finished {
+  font-weight: 700;
+  color: #22c55e;
+}
+
+.status-message {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.status-message.success {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+/* Sudoku 棋盘 */
+
+.sudoku-grid {
+  display: grid;
+  gap: 2px;
+  background: #020617;
+  padding: 4px;
+  margin-top: 1rem;
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.4);
+}
+
+.sudoku-grid.completed {
+  box-shadow: 0 0 16px rgba(34, 197, 94, 0.8);
+}
+
+.cell {
+  width: 100%;
+  height: 45px;
+  font-size: 1.3rem;
+  text-align: center;
+  border: 1px solid #4b5563;
+  outline: none;
+  background: #020617;
+  color: #e5e7eb;
+  font-weight: 500;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s,
+    transform 0.06s;
+  cursor: pointer;
+}
+
+/* 初始数字（不能改） */
+.cell.fixed {
+  background: #111827;
+  font-weight: 700;
+}
+
+/* hover 效果 */
+.cell:hover {
+  background: #1f2937;
+}
+
+/* 选中格子 */
+.cell.selected {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 1px #38bdf8;
+}
+
+/* 错误格子 */
+.cell.error {
+  border-color: #f97373;
+  background: #7f1d1d;
+}
+
+/* Hint 格子（如果你做了 hint bonus，可以用） */
+.cell.hint {
+  box-shadow: 0 0 0 2px #facc15;
+  background: #1e293b;
+}
+
+/* 子宫格粗边框 + 外边框 */
+.cell.block-top {
+  border-top: 3px solid #e5e7eb;
+}
+.cell.block-left {
+  border-left: 3px solid #e5e7eb;
+}
+.cell.block-bottom {
+  border-bottom: 3px solid #e5e7eb;
+}
+.cell.block-right {
+  border-right: 3px solid #e5e7eb;
+}
+
+/* 响应式：手机上更紧凑 */
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  .navbar-links {
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .page {
+    padding: 1rem 1rem 1.25rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .sudoku-grid {
+    max-width: 100%;
+    margin: 0.6rem auto;
+    padding: 3px;
+    gap: 1px;
+  }
+
+  .cell {
+    height: 32px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .cell {
+    height: 28px;
+    font-size: 0.9rem;
+  }
+}
