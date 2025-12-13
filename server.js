@@ -41,11 +41,13 @@ app.use("/api/highscore", highscoreRoutes);
 app.use(express.static(join(__dirname, "frontend", "dist")));
 
 // -------- serve index.html for all non-API routes (SPA routing) --------
-app.get("*", (req, res) => {
+// Express 5.x compatible: use app.use with a catch-all middleware
+app.use((req, res, next) => {
     // Don't serve index.html for API routes
     if (req.path.startsWith("/api")) {
         return res.status(404).json({ error: "Not found" });
     }
+    // Serve index.html for all other routes (SPA routing)
     res.sendFile(join(__dirname, "frontend", "dist", "index.html"));
 });
 
