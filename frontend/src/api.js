@@ -1,4 +1,5 @@
-const API_BASE = "http://localhost:5050";
+// Use relative path in production, absolute in development
+const API_BASE = import.meta.env.PROD ? "" : "http://localhost:5050";
 
 export async function apiFetch(path, options = {}) {
     const res = await fetch(`${API_BASE}${path}`, {

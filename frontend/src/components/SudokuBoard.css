@@ -18,20 +18,22 @@
   text-align: center;
   border: 1px solid #bbb;
   outline: none;
-  background: #fff;
-  color: #222;
+  background: #fff !important;
+  color: #000 !important;
   font-weight: 500;
   transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 
 .cell.fixed {
-  background: #e9e9e9;
+  background: #e9e9e9 !important;
+  color: #000 !important;
   font-weight: 700;
 }
 
 /* hover cell */
 .cell:hover {
-  background: #f7f3d6;
+  background: #f7f3d6 !important;
+  color: #000 !important;
 }
 
 /* selected cell */
@@ -43,7 +45,8 @@
 /* error cell */
 .cell.error {
   border-color: #e53935;
-  background: #ffe6e6;
+  background: #ffe6e6 !important;
+  color: #000 !important;
 }
 
 /* block borders + outer borders */

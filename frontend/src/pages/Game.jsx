@@ -29,7 +29,8 @@ export default function Game() {
         setError(err.message);
         setLoading(false);
       });
-  }, [id, loadGameFromBackend]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]); // Only reload when id changes, not when loadGameFromBackend changes
 
   // Notify backend when the game is completed
   useEffect(() => {
@@ -73,7 +74,12 @@ export default function Game() {
       )}
 
       {board && board.length ? (
-        <SudokuBoard />
+        <>
+          <SudokuBoard />
+          <p style={{ fontSize: "0.8rem", color: "#666", marginTop: "0.5rem" }}>
+            Status: {status} | Click empty cells (white background) to input numbers
+          </p>
+        </>
       ) : (
         <p>Loading board...</p>
       )}
