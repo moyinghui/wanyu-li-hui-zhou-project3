@@ -61,7 +61,12 @@ connectDB()
         });
     })
     .catch((err) => {
-        console.error("❌ Failed to start server", err);
+        console.error("❌ Failed to start server:");
+        console.error(err.message || err);
+        console.error("\n💡 Troubleshooting tips:");
+        console.error("   1. Check MONGO or MONGODB_URI environment variable is set");
+        console.error("   2. Verify MongoDB connection string is correct");
+        console.error("   3. Ensure MongoDB Atlas IP whitelist includes Render IP");
         process.exit(1);
     });
 
